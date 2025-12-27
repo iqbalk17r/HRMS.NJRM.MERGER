@@ -1220,6 +1220,48 @@
 
                                                     });
                                                 </script>-->
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-3">idbu</label>
+                                                    <div class="col-sm-8">
+                                                        <select name="idbu" class="form-control input-sm" placeholder="---KETIK IDBU---" id="idbu">
+                                                            <option value="" class=""></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <script type="text/javascript">
+                                                    $('#idbu').selectize({
+                                                        plugins: ['hide-arrow', 'selectable-placeholder', 'infinite-scroll'],
+                                                        valueField: 'idbu',
+                                                        labelField: 'idbuname',
+                                                        searchField: ['idbuname'],
+                                                        options: [],
+                                                        create: false,
+                                                        render: {
+                                                            option: function(item, escape) {
+                                                                return `
+                                                                    <div class="row">
+                                                                        <div class="col-xs-3">${escape(item.idbu)}</div>
+                                                                        <div class="col-xs-9">${escape(item.idbuname)}</div>
+                                                                    </div>
+                                                                `;
+                                                            }
+                                                        },
+                                                        load: function(query, callback) {
+                                                            $.post(base('trans/karyawan/getIdbu'), {
+                                                                search: query,
+                                                                perpage: 7,
+                                                                page: 1
+                                                            })
+                                                            .done(function(res) {
+                                                                callback(res.group);
+                                                            })
+                                                            .fail(function() {
+                                                                callback();
+                                                            });
+                                                        }
+                                                    });
+                                                </script>
                                             </div>
                                         </div>
                                     </div>

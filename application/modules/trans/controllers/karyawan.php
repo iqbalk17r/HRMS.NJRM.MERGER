@@ -353,6 +353,7 @@ class Karyawan extends MX_Controller {
         /* END CODE UNTUK VERSI */
 
         $data["dtl"] = $this->m_karyawan->get_by_id($id)->row_array();
+        var_dump($data["dtl"]);
         $this->template->display("trans/karyawan/v_editkary", $data);
     }
 
@@ -381,6 +382,8 @@ class Karyawan extends MX_Controller {
         $kdwilayahnominal=trim($this->input->post('kdwilayahnominal'));
         $kdlvlgp=trim($this->input->post('kdlvlgp'));
         if($dfktp=='t'){ $noktp=strtoupper($this->input->post('noktp2')); } else { $noktp=strtoupper($this->input->post('noktp1')); };
+
+        $idbu=$this->input->post('idbu');
 
         if(empty($tgl_ktp1)){
             $tgl_ktp=null;
@@ -505,8 +508,10 @@ class Karyawan extends MX_Controller {
             'nokk'=>$nokk,
             'kdwilayahnominal'=>$kdwilayahnominal,
             'kdlvlgp' => $kdlvlgp,
-            'callplan' => $this->input->post('callplan')
+            'callplan' => $this->input->post('callplan'),
+            'idbu'=>$idbu
         );
+ 
         $cek=$this->m_karyawan->cek_exist($nik);
         if ($cek>0) {
             redirect('trans/karyawan/index/exist');
@@ -681,7 +686,8 @@ class Karyawan extends MX_Controller {
             'deviceid'=>$deviceid,
             'updateby' => $username,
             'updatedate' => $inputdate,
-            'callplan' => $this->input->post('callplan')
+            'callplan' => $this->input->post('callplan'),
+            'idbu' => $this->input->post('idbu')
         );
 		
 		//print_r($data);die();
@@ -2472,6 +2478,31 @@ class Karyawan extends MX_Controller {
         }
 
     }
+
+    function getIdbu() {
+
+        $search = $this->input->post('search');
+        $perpage = (int)$this->input->post('perpage');
+        $page    = (int)$this->input->post('page');
+    
+        $offset = ($page - 1) * $perpage;
+    
+        $query = $this->db->query(
+            "SELECT * FROM sc_mst.idbu ORDER BY idbu ASC LIMIT ? OFFSET ?",
+            [$perpage, $offset]
+        );
+    
+        $data  = $query->result_array();
+        $count = count($data);
+    
+        header('Content-Type: application/json');
+        echo json_encode([
+            'totalcount' => $count,
+            'group'      => $data
+        ]);
+    }
+    
+    
         
 }
 

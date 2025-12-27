@@ -166,7 +166,7 @@ error_reporting(0);
 								<div class="form-group">
                                     <label for="inputstatusrmh" class="col-sm-4 control-label">Idbu</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control input-sm" id="idbu" name="idbu" value="<?php echo $lp['idbu'];?>" readonly>
+                                        <input type="text" class="form-control input-sm" id="idbu" name="idbu" value="<?php echo $lp['idbuname'];?>" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group">

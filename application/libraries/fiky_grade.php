@@ -30,19 +30,19 @@ class Fiky_grade
     }
 
     function list_department($param = null){
-        return $this->_CI->db->query("select * from sc_mst.departmen where kddept is not null $param order by kddept asc");
+        return $this->_CI->db->query("select * from sc_mst.departmen where kddept is not null and hold = 'N' $param order by kddept asc");
     }
 
     function list_subdepartment($param = null){
-        return $this->_CI->db->query("select * from sc_mst.subdepartmen where kdsubdept is not null $param order by kdsubdept asc");
+        return $this->_CI->db->query("select * from sc_mst.subdepartmen where kdsubdept is not null and hold = 'N' $param order by kdsubdept asc");
     }
 
     function list_jabatan($param = null){
-        return $this->_CI->db->query("select * from sc_mst.jabatan where kdjabatan is not null $param order by kdjabatan asc");
+        return $this->_CI->db->query("select * from sc_mst.jabatan where kdjabatan is not null and hold = 'N' $param order by kdjabatan asc");
     }
 
     function list_lvljabatan($param = null){
-        return $this->_CI->db->query("select * from sc_mst.lvljabatan where kdlvl is not null $param order by kdlvl asc");
+        return $this->_CI->db->query("select * from sc_mst.lvljabatan where kdlvl is not null and hold = 'N' $param order by kdlvl asc");
     }
 
     function list_grade($param = null){
