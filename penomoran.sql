@@ -859,3 +859,76 @@ select * from sc_mst.nomor where dokumen='IJIN-KARYAWAN'
 
 
 
+-- DROP FUNCTION sc_tmp.tr_bbmkendaraan_mst();
+
+CREATE OR REPLACE FUNCTION sc_tmp.tr_bbmkendaraan_mst()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    --created by Fiky ::18/05/2018
+     vr_nomor CHAR(12);
+    
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+
+	    RETURN NEW;
+	ELSEIF TG_OP = 'UPDATE' THEN
+		IF(new.status = 'F' AND old.status = 'I') THEN
+			DELETE FROM sc_mst.penomoran WHERE userid = new.docno;
+			DELETE FROM sc_mst.trxerror WHERE userid = new.docno;
+
+			
+			insert into sc_mst.penomoran (userid, dokumen,nomor,errorid,partid,counterid,xno)
+			values (new.docno, 'BA_BK', ' ', 0, ' ', 1, 0);
+
+            vr_nomor := TRIM(COALESCE(nomor, '')) FROM sc_mst.penomoran WHERE userid = new.docno AND dokumen = 'BA_BK';
+
+			INSERT INTO sc_his.bbmkendaraan_mst
+            (docno, docdate, docref, kdgroup, kdsubgroup, stockcode, bahanbakar, km_awal, km_akhir, ttlvalue, description, status,
+            inputdate, inputby, updatedate, updateby, approvaldate, approvalby, docnotmp, suppcode, subsuppcode, kupon, liters, printyes, printby, printdate, hargasatuan)
+            (SELECT vr_nomor, docdate, docref, kdgroup, kdsubgroup, stockcode, bahanbakar, km_awal, km_akhir, ttlvalue, description, 'A' AS status,
+            inputdate, inputby, updatedate, updateby, approvaldate, approvalby, docnotmp, suppcode, subsuppcode, kupon, liters, printyes, printby, printdate, hargasatuan FROM sc_tmp.bbmkendaraan_mst WHERE docno = new.docno);
+
+			DELETE FROM sc_tmp.bbmkendaraan_mst WHERE docno = new.docno;
+		ELSEIF(new.status = 'F' AND old.status = 'E') THEN
+			DELETE FROM sc_his.bbmkendaraan_mst WHERE docno = new.docnotmp;
+
+			INSERT INTO sc_his.bbmkendaraan_mst
+            (docno, docdate, docref, kdgroup, kdsubgroup, stockcode, bahanbakar, km_awal, km_akhir, ttlvalue, description, status,
+            inputdate, inputby, updatedate, updateby, approvaldate, approvalby, docnotmp, suppcode, subsuppcode, kupon, liters, printyes, printby, printdate, hargasatuan)
+            (SELECT docnotmp, docdate, docref, kdgroup, kdsubgroup, stockcode, bahanbakar, km_awal, km_akhir, ttlvalue, description, 'A' AS status,
+            inputdate, inputby, updatedate, updateby, approvaldate, approvalby, docnotmp, suppcode, subsuppcode, kupon, liters, printyes, printby, printdate, hargasatuan FROM sc_tmp.bbmkendaraan_mst WHERE docno = new.docno);
+
+			DELETE FROM sc_tmp.bbmkendaraan_mst WHERE docno = new.docno;
+		ELSEIF(new.status = 'F' AND old.status = 'A') THEN
+			DELETE FROM sc_his.bbmkendaraan_mst WHERE docno = new.docnotmp;
+
+			INSERT INTO sc_his.bbmkendaraan_mst
+            (docno, docdate, docref, kdgroup, kdsubgroup, stockcode, bahanbakar, km_awal, km_akhir, ttlvalue, description, status,
+            inputdate, inputby, updatedate, updateby, approvaldate, approvalby, docnotmp, suppcode, subsuppcode, kupon, liters, printyes, printby, printdate, hargasatuan)
+            (SELECT docnotmp, docdate, docref, kdgroup, kdsubgroup, stockcode, bahanbakar, km_awal, km_akhir, ttlvalue, description, 'P' AS status,
+            inputdate, inputby, updatedate, updateby, approvaldate, approvalby, docnotmp, suppcode, subsuppcode, kupon, liters, printyes, printby, printdate, hargasatuan FROM sc_tmp.bbmkendaraan_mst WHERE docno = new.docno);
+
+			update sc_mst.mbarang set lastkmh=new.km_akhir where nodok=new.stockcode;
+
+			DELETE FROM sc_tmp.bbmkendaraan_mst WHERE docno = new.docno;
+		ELSEIF(new.status = 'F' AND old.status = 'C') THEN
+			DELETE FROM sc_his.bbmkendaraan_mst WHERE docno = new.docnotmp;
+
+			INSERT INTO sc_his.bbmkendaraan_mst
+            (docno, docdate, docref, kdgroup, kdsubgroup, stockcode, bahanbakar, km_awal, km_akhir, ttlvalue, description, status,
+            inputdate, inputby, updatedate, updateby, approvaldate, approvalby, docnotmp, suppcode, subsuppcode, kupon, liters, printyes, printby, printdate, hargasatuan)
+            (SELECT docnotmp, docdate, docref, kdgroup, kdsubgroup, stockcode, bahanbakar, km_awal, km_akhir, ttlvalue, description, 'C' AS status,
+            inputdate, inputby, updatedate, updateby, approvaldate, approvalby, docnotmp, suppcode, subsuppcode, kupon, liters, printyes, printby, printdate, hargasatuan FROM sc_tmp.bbmkendaraan_mst WHERE docno = new.docno);
+
+			DELETE FROM sc_tmp.bbmkendaraan_mst WHERE docno = new.docno;
+		END IF;
+
+	    RETURN NEW;
+	END IF;
+
+    RETURN new;
+END;
+$function$
+;
