@@ -1017,7 +1017,7 @@ class M_absensi extends CI_Model {
                 FROM (
                     SELECT * 
                     FROM dblink (
-                        'hostaddr=$host dbname=$dbname user=$dbuser password=$dbpass port=39170',
+                        'hostaddr=$host dbname=$dbname user=$dbuser password=$dbpass',
                         'SELECT userid, usersname, nik, checktime, customeroutletcode, customercodelocal, custname, customertype
                         FROM (
                             SELECT x.userid, x.usersname, x.nik, x.checktime, x.customeroutletcode, x.customercodelocal, x.custname, x.customertype

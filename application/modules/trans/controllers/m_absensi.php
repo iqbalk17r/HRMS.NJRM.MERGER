@@ -894,7 +894,7 @@ class M_absensi extends CI_Model {
     }
 
     function read_dblink_join_karyawan_mabs($host,$dbname,$dbuser,$dbpass,$tgl1,$tgl2,$kdcabang){
-        return $this->db->query("select * from (select a.*,b.idabsen,b.kdcabang,b.nmlengkap from 
+        return $this->db->query("_select * from (select a.*,b.idabsen,b.kdcabang,b.nmlengkap from 
                                         (select * from dblink(
                                             'hostaddr=$host dbname=$dbname user=$dbuser password=$dbpass',
                                            'select userid,usersname,nik,checktime from sc_trx.v_checkin_mobile_v2')

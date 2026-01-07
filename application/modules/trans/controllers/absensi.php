@@ -992,10 +992,12 @@ class Absensi extends MX_Controller {
         $userpg = base64_decode($dtl_opt['c_userpg']); $passpg = base64_decode($dtl_opt['c_passpg']);
 
         if ($maplikasi==='MCRM') {
+//            var_dump('dddddwww');die();
             /*khusus absensi checkin diluar kantor*/
             $data['list_absen']=$this->m_absensi->read_dblink_join_karyawan($host,$dbname,$userpg,$passpg,$tgl1,$tgl2,$kdcabang)->result();
             $data['ttldata']=sizeof($data['list_absen']);
         } else if ($maplikasi==='MABS') {
+//            var_dump('ddddd');die();
             $data['list_absen']=$this->m_absensi->read_dblink_join_karyawan_mabs($host,$dbname,$userpg,$passpg,$tgl1,$tgl2,$kdcabang)->result();
             $data['ttldata']=sizeof($data['list_absen']);
         }
