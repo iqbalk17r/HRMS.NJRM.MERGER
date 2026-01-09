@@ -206,7 +206,7 @@ class Ojt extends MX_Controller
 		$data['nikuser'] = $this->session->userdata('nik');
 
 		$this->load->helper('my_helper');
-		$listpk = $this->m_ojt->get_list_ojtpen($data['nikuser'])->result();
+		$listpk = $this->m_ojt->get_list_ojtpen('08.0512.006')->result();
 		foreach ($listpk as &$info) {
 			$info->periode = formattgl($info->tgl_mulai). " - " .formattgl($info->tgl_selesai);
 		}
@@ -632,6 +632,13 @@ class Ojt extends MX_Controller
         $docno = $this->fiky_encryption->dekript($this->input->get('enc_docno'));
 		$kddok = $this->fiky_encryption->dekript($this->input->get('enc_kddok'));
         $nik = $this->m_stspeg->q_show_edit_karkon($docno)->row()->nik;
+
+        $nik = $this->db->query("
+            select
+                trim(nik) AS nik
+            from sc_pk.master_ojt where kddok = '$kddok'; 
+        ")->row()->nik;
+//        var_dump($nik,$kddok);die();
         $this->load->helper('my_helper');
         $dataopt = [
             'kepala_sdm' => '',
@@ -640,6 +647,7 @@ class Ojt extends MX_Controller
             'revisi' => '',
             'halaman' => ''
         ];
+//        var_dump($nik,$docno);die();
         $infoumum = $this->m_stspeg->q_kar($nik, $docno)->result();
 		$tglmulaikontrak = date('Ym', strtotime($infoumum[0]->tgl_mulai));
 		$tglselesaikontrak = date('Ym', strtotime($infoumum[0]->tgl_selesai));
@@ -653,13 +661,13 @@ class Ojt extends MX_Controller
 			$info->tgl_selesai1 = isset($info->tgl_selesai) ? formattgl($info->tgl_selesai) : null;
             $info->tglmasukkerja1 = isset($info->tglmasukkerja) ? formattgl($info->tglmasukkerja) : null;
 		}
-		//var_dump($infoumum);
-		
+
         //data detail
 		$dtl = $this->m_ojt->q_get_detail_lain_cetak($docno,$kddok)->result();
+//        var_dump($dtl);die();
 
 		foreach ($dtl as &$dtldata) {
-			$dtldata->nama_panelist = $this->ucstring(trim($this->m_ojt->get_name($dtldata->nik_panelist)));
+			$dtldata->nama_panelist = $this->ucstring(trim($this->m_ojt->get_name(trim($dtldata->nik_panelist))));
 		}
 
 		//data aspek_penilaian
